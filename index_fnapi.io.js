@@ -37,8 +37,13 @@ const currentDate = shopData.lastUpdate.date.replace(" ", "-").split(`-`);
 let shopItems = shopData?.shop || [];
 
 // *** Фильтрация ненужных предметов ***
-if (!shopData?.featured || !shopData?.daily) {
-  console.error("[ERROR] Ошибка получения данных магазина: данные отсутствуют.");
+if (shopItems && Array.isArray(shopItems)) {
+  shopItems = shopItems.filter((shopItem) => {
+    const allowedTypes = ['outfit', 'pickaxe', 'emote', 'wrap', 'glider', 'backbling']; // Разрешённые типы предметов
+    return allowedTypes.includes(shopItem.mainType);
+  });
+} else {
+  console.error("[ERROR] Ошибка: данные магазина недоступны или некорректны.");
   process.exit(1);
 }
 
