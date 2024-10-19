@@ -34,9 +34,14 @@ const shopData = await fetch("https://fortniteapi.io/v2/shop", {
   });
 
 const currentDate = shopData.lastUpdate.date.replace(" ", "-").split(`-`);
-let shopItems = shopData.shop;
+let shopItems = shopData?.shop || [];
 
 // *** Фильтрация ненужных предметов ***
+if (!shopData?.featured || !shopData?.daily) {
+  console.error("[ERROR] Ошибка получения данных магазина: данные отсутствуют.");
+  process.exit(1);
+}
+
 shopItems = shopItems.filter((shopItem) => {
   const allowedTypes = ['outfit', 'pickaxe', 'emote', 'wrap', 'glider', 'backbling']; // Разрешённые типы предметов
   return allowedTypes.includes(shopItem.mainType);
