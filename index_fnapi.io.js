@@ -3,27 +3,30 @@
 import fetch from "node-fetch";
 import fs from "fs";
 import Jimp from "jimp";
+import axios from "axios";
 import "dotenv/config";
+import FormData from "form-data";
 
 import gitUpload from "./src/github_upload.js";
 import discordWebhook from "./src/discord_webhook.js";
 
 if (!process.env.FNAPI_IO_TOKEN) throw new Error("required FNAPI_IO_TOKEN not found on env");
+if (!process.env.IMGBB_API_KEY) throw new Error("required IMGBB_API_KEY not found on env");
 
 import { shopItem as shopItemImage, finishProgram } from "./src/utils.js";
 
 console.log("[INFO] Verificando os itens da loja");
 
-const requestHeaders = {}
+const requestHeaders = {};
 if (process.env.FNAPI_IO_TOKEN) requestHeaders.Authorization = process.env.FNAPI_IO_TOKEN;
 
-const shopData = await fetch("https://fortniteapi.io/v2/shop?lang=pt-BR", {
+const shopData = await fetch("https://fortniteapi.io/v2/shop", {
   headers: requestHeaders,
 })
   .then(async (res) => {
     if (res.ok) return await res.json();
     await finishProgram(
-      `[ERROR] O Status Code recebido é direrente do esperado: ${res.status}`
+      `[ERROR] O Status Code recebido é diferente do esperado: ${res.status}`
     );
   })
   .catch((err) => {
@@ -31,7 +34,13 @@ const shopData = await fetch("https://fortniteapi.io/v2/shop?lang=pt-BR", {
   });
 
 const currentDate = shopData.lastUpdate.date.replace(" ", "-").split(`-`);
-const shopItems = shopData.shop;
+let shopItems = shopData.shop;
+
+// *** Фильтрация ненужных предметов ***
+shopItems = shopItems.filter((shopItem) => {
+  const allowedTypes = ['outfit', 'pickaxe', 'emote', 'wrap', 'glider', 'backbling']; // Разрешённые типы предметов
+  return allowedTypes.includes(shopItem.mainType);
+});
 
 console.log(`[INFO] Loja verificada, ${shopItems.length} itens encontrados`);
 
@@ -73,16 +82,9 @@ shopItems.forEach((shopItem) => {
       }
 
       try {
-        if (shopItem.mainType === "wrap")
-          itemImage = await Jimp.read(
-            firstItem.images.icon ||
-            firstItem.images.featured ||
-            shopItem.displayAssets[0].url
-          );
-        else
-          itemImage = await Jimp.read(
-            shopItem.displayAssets[0].url || firstItem.images.icon
-          );
+        itemImage = await Jimp.read(
+          shopItem.displayAssets[0].url || firstItem.images.icon
+        );
       } catch {
         itemImage = missingItemImage;
       }
@@ -161,7 +163,7 @@ shopBackground.resize(
   350
 );
 
-const titleText = "LOJA DE ITENS";
+const titleText = "ITEM SHOP";
 const leftWatermark = "";
 const rightWatermark = "";
 const dateText = `DIA ${currentDate[2]}/${currentDate[1]}/${currentDate[0]}`;
@@ -217,8 +219,7 @@ itemImages.forEach(({ image }) => {
   )
     lastLineOffset =
       (256 * (collumsCount - (itemImages.length % collumsCount)) +
-        (collumsCount - (itemImages.length % collumsCount)) * 15) /
-      2;
+        (collumsCount - (itemImages.length % collumsCount)) * 15) / 2;
 
   shopBackground.blit(
     image,
@@ -234,18 +235,45 @@ itemImages.forEach(({ image }) => {
 
 const savePath = './ImagensGeradas/';
 
-function saveImage(version = 1) {
-  return new Promise(async (resolve, reject) => {
-    const fileName = `${String(currentDate[2]).padStart(2, '0')}-${String(currentDate[1]).padStart(2, '0')}-${String(currentDate[0]).padStart(2, '0')}_v${version}.png`;
-    if (fs.existsSync(savePath + fileName)) resolve(await saveImage(version + 1));
-    await shopBackground.writeAsync(savePath + fileName);
-    resolve(fileName);
-  })
+async function saveImage(version = 1) {
+  const fileName = `${String(currentDate[2]).padStart(2, '0')}-${String(currentDate[1]).padStart(2, '0')}-${String(currentDate[0]).padStart(2, '0')}_v${version}.png`;
+  if (fs.existsSync(savePath + fileName)) return await saveImage(version + 1);
+  await shopBackground.writeAsync(savePath + fileName);
+  return fileName;
 }
 
-saveImage().then((savedFile) => {
-  console.log("[INFO] Imagem da loja criada");
-  if (process.env.UPLOAD_TO_DISCORD_WEBHOOK.toLocaleLowerCase() === 'yes') discordWebhook(savePath, savedFile);
-  if (process.env.UPLOAD_TO_GITHUB.toLocaleLowerCase() === 'yes') gitUpload(savePath, savedFile);
-});
+async function uploadToImgbb(filePath) {
+  try {
+    const formData = new FormData();
+    formData.append("image", fs.createReadStream(filePath));
 
+    const response = await axios.post(
+      `https://api.imgbb.com/1/upload?key=${process.env.IMGBB_API_KEY}`,
+      formData,
+      { headers: formData.getHeaders() }
+    );
+
+    if (response.data && response.data.data && response.data.data.url) {
+      console.log(`[INFO] Imagem enviada para Imgbb: ${response.data.data.url}`);
+      return response.data.data.url;
+    }
+  } catch (error) {
+    console.error("[ERROR] Erro ao enviar imagem para Imgbb:", error);
+  }
+  return null;
+}
+
+saveImage().then(async (savedFile) => {
+  console.log("[INFO] Imagem da loja criada");
+  const fullPath = savePath + savedFile;
+
+  // Загрузка на Imgbb
+  const imgbbUrl = await uploadToImgbb(fullPath);
+
+  if (imgbbUrl) {
+    console.log(`[INFO] Imagem disponível: ${imgbbUrl}`);
+  }
+
+  if ((process.env.UPLOAD_TO_DISCORD_WEBHOOK || '').toLocaleLowerCase() === 'yes') discordWebhook(savePath, savedFile);
+  if ((process.env.UPLOAD_TO_GITHUB || '').toLocaleLowerCase() === 'yes') gitUpload(savePath, savedFile);
+});

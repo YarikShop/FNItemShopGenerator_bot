@@ -19,7 +19,7 @@ const requestHeaders = {}
 if (process.env.FNAPI_COM_TOKEN) requestHeaders.Authorization = process.env.FNAPI_COM_TOKEN;
 
 const shopData = await fetch(
-  "https://fortnite-api.com/v2/shop/br/combined?language=pt-BR",
+  "https://fortnite-api.com/v2/cosmetics/new",
   {
     headers: requestHeaders,
   }
