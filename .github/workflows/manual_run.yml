@@ -58,13 +58,17 @@ jobs:
     - name: Send Image URL to Make.com Webhook
       env:
         MAKE_WEBHOOK_URL: ${{ secrets.MAKE_WEBHOOK_URL }}
+        IMAGE_URL: ${{ env.IMAGE_URL }}
       run: |
         if [[ ! "$IMAGE_URL" =~ ^https?:// ]]; then
           echo "Error: IMAGE_URL is invalid or empty. Skipping Make.com notification."
           exit 1
         fi
         echo "Sending Image URL: $IMAGE_URL to Make.com Webhook"
-        curl -s -X POST "$MAKE_WEBHOOK_URL" -H "Content-Type: application/json" -d '{"imageUrl": "$IMAGE_URL"}'
+        curl -s -X POST "$MAKE_WEBHOOK_URL" -H "Content-Type: application/json" -d '{"imageUrl": "'$IMAGE_URL'"}'
+        
+        
+      
         
         
     
