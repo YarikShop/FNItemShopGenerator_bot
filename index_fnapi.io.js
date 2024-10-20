@@ -42,7 +42,7 @@ let shopItems = shopData?.shop || [];
 // *** Фильтрация ненужных предметов ***
 if (shopItems && Array.isArray(shopItems)) {
   shopItems = shopItems.filter((shopItem) => {
-    const allowedTypes = ['outfit', 'pickaxe', 'emote', 'wrap', 'glider', 'backbling']; // Разрешённые типы предметов
+    const allowedTypes = ['battlepass', 'outfit', 'pickaxe', 'emote', 'wrap', 'glider', 'backbling']; // Разрешённые типы предметов
     return allowedTypes.includes(shopItem.mainType);
   });
 } else {
