@@ -1,5 +1,6 @@
 "use strict";
 
+import requests
 import fetch from "node-fetch";
 import fs from "fs";
 import Jimp from "jimp";
@@ -39,7 +40,21 @@ let shopItems = shopData?.shop || [];
 // *** Фильтрация ненужных предметов ***
 if (shopItems && Array.isArray(shopItems)) {
   shopItems = shopItems.filter((shopItem) => {
-    const allowedTypes = ['outfit', 'pickaxe', 'emote', 'wrap', 'glider', 'backbling']; // Разрешённые типы предметов
+    const allowedTypes = [
+      'outfit',       // Костюмы
+      'pickaxe',      // Кирки
+      'emote',        // Эмоции
+      'wrap',         // Обёртки
+      'glider',       // Дельтапланы
+      'backbling',    // Аксессуары на спину
+      'battlepass',   // Боевой пропуск
+      'bundle',       // Комплекты
+      'accessory',    // Инструменты и аксессуары
+      'vehicle',      // Наземный транспорт
+      'decorative',   // Декоративные предметы
+      'wrap_decor',   // Обёртки и декорации
+      'exclusive'     // Эксклюзивные предметы
+    ]; // Разрешённые типы предметов
     return allowedTypes.includes(shopItem.mainType);
   });
 } else {
@@ -47,14 +62,11 @@ if (shopItems && Array.isArray(shopItems)) {
   process.exit(1);
 }
 
-shopItems = shopItems.filter((shopItem) => {
-  const allowedTypes = ['outfit', 'pickaxe', 'emote', 'wrap', 'glider', 'backbling']; // Разрешённые типы предметов
-  return allowedTypes.includes(shopItem.mainType);
-});
-
 console.log(`[INFO] Loja verificada, ${shopItems.length} itens encontrados`);
 
-console.log("[INFO] Gerando imagem dos itens\n");
+console.log("[INFO] Gerando imagem dos предметов\n");
+
+
 
 const missingItemImage = await Jimp.read("./src/images/QuestionMark.png");
 const largeItemOverlay = await Jimp.read("./src/images/LargeOverlay.png");
