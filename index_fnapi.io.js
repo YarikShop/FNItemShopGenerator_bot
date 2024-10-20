@@ -277,20 +277,21 @@ saveImage().then(async (savedFile) => {
   console.log("[INFO] Imagem da loja criada");
   const fullPath = savePath + savedFile;
 
-  // Загрузка на Imgbb
-  const imgbbUrl = await uploadToImgbb(fullPath);
+// Загрузка на Imgbb
+    const imgbbUrl = await uploadToImgbb(fullPath);
 
-  if (imgbbUrl) {
-    console.log(`[INFO] Imagem disponível: ${imgbbUrl}`);
-  }
+    if (imgbbUrl) {
+      console.log(`[INFO] Imagem disponível: ${imgbbUrl}`);
+    }
 
-  // Вывод URL изображения в консоль
-    console.log(imageUrl);
-  
-  if ((process.env.UPLOAD_TO_DISCORD_WEBHOOK || '').toLocaleLowerCase() === 'yes') discordWebhook(savePath, savedFile);
-  if ((process.env.UPLOAD_TO_GITHUB || '').toLocaleLowerCase() === 'yes') gitUpload(savePath, savedFile);
-
-} catch (err) {
+    // Проверка условий для загрузки на Discord и GitHub
+    if ((process.env.UPLOAD_TO_DISCORD_WEBHOOK || '').toLocaleLowerCase() === 'yes') {
+      discordWebhook(savePath, savedFile);
+    }
+    if ((process.env.UPLOAD_TO_GITHUB || '').toLocaleLowerCase() === 'yes') {
+      gitUpload(savePath, savedFile);
+    }
+  } catch (err) {
     console.error(`[ERROR] Ошибка загрузки на Imgbb: ${err}`);
-}
-});
+  }
+}); // <-- Закрывающая скобка для saveImage().then()
