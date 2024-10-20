@@ -19,5 +19,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run your script
-        run: node index_fnapi.io.js
+      - name: Run script
+        env:
+          FNAPI_IO_TOKEN: ${{ secrets.FNAPI_IO_TOKEN }}
+      run: node index_fnapi.io.js
