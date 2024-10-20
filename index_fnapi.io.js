@@ -1,7 +1,8 @@
 "use strict";
 
 import requests
-import fetch from "node-fetch";
+const fetch = require("node-fetch");
+//import fetch from "node-fetch";
 import fs from "fs";
 import Jimp from "jimp";
 import axios from "axios";
