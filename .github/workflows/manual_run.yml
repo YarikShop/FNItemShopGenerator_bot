@@ -22,4 +22,5 @@ jobs:
     - name: Run script
       env:
         FNAPI_IO_TOKEN: ${{ secrets.FNAPI_IO_TOKEN }}
+        IMGBB_API_KEY: ${{ secrets.IMGBB_API_KEY }}
       run: node index_fnapi.io.js
