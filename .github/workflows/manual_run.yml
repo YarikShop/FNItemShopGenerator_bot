@@ -32,14 +32,21 @@ jobs:
         echo "IMAGE_URL=$IMAGE_URL" >> $GITHUB_ENV
 
     - name: Send Image to Telegram Bot
-      if: env.IMAGE_URL != ''
       env:
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        IMAGE_URL: ${{ env.IMAGE_URL }}
       run: |
-        curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendPhoto" \
+        IMAGE_URL=$(node index_fnapi.io.js | tail -n 1)
+        # Удаление лишних символов, таких как пробелы или символы новой строки
+        IMAGE_URL=$(echo $IMAGE_URL | xargs)
+        
+        if [[ ! "$IMAGE_URL" =~ ^https?:// ]]; then
+          echo "Error: IMAGE_URL is invalid or empty. Skipping Telegram notification."
+          exit 1
+        fi
+
+        echo "Debug: IMAGE_URL is $IMAGE_URL" # Отладочный вывод для проверки URL
+        curl -v -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendPhoto" \
           -F chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
           -F photo="$IMAGE_URL"
-          
         
