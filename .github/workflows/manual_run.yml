@@ -18,7 +18,26 @@ jobs:
 
     - name: Install dependencies
       run: npm install
-      
+
+    - name: Verify secrets
+      run: |
+        if [ -z "${{ secrets.FNAPI_IO_TOKEN }}" ]; then
+          echo "Error: FNAPI_IO_TOKEN is not set"
+          exit 1
+        fi
+        if [ -z "${{ secrets.IMGBB_API_KEY }}" ]; then
+          echo "Error: IMGBB_API_KEY is not set"
+          exit 1
+        fi
+        if [ -z "${{ secrets.TELEGRAM_BOT_TOKEN }}" ]; then
+          echo "Error: TELEGRAM_BOT_TOKEN is not set"
+          exit 1
+        fi
+        if [ -z "${{ secrets.TELEGRAM_CHAT_ID }}" ]; then
+          echo "Error: TELEGRAM_CHAT_ID is not set"
+          exit 1
+        fi
+        
     - name: Run script and extract image URL
       env:
         FNAPI_IO_TOKEN: ${{ secrets.FNAPI_IO_TOKEN }}
