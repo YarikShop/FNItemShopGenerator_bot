@@ -279,11 +279,12 @@ saveImage().then(async (savedFile) => {
 
 // Загрузка на Imgbb
     const imgbbUrl = await uploadToImgbb(fullPath);
+    // После успешной загрузки на Imgbb выводим только URL изображения
+if (imgbbUrl) {
+  console.log(imgbbUrl); // Убедитесь, что это единственный вывод
+}
 
-    if (imgbbUrl) {
-      console.log(`[INFO] Imagem disponível: ${imgbbUrl}`);
-    }
-
+  
     // Проверка условий для загрузки на Discord и GitHub
     if ((process.env.UPLOAD_TO_DISCORD_WEBHOOK || '').toLocaleLowerCase() === 'yes') {
       discordWebhook(savePath, savedFile);
