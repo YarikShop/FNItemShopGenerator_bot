@@ -18,7 +18,6 @@ jobs:
 
     - name: Install dependencies
       run: npm install
-
     - name: Run script
       env:
         FNAPI_IO_TOKEN: ${{ secrets.FNAPI_IO_TOKEN }}
