@@ -18,13 +18,14 @@ jobs:
 
     - name: Install dependencies
       run: npm install
+      
     - name: Run script
       env:
         FNAPI_IO_TOKEN: ${{ secrets.FNAPI_IO_TOKEN }}
         IMGBB_API_KEY: ${{ secrets.IMGBB_API_KEY }}
       run: node index_fnapi.io.js
 
-      - name: Send Image to Telegram Bot
+    - name: Send Image to Telegram Bot
       env:
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
