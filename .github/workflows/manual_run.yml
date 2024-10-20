@@ -29,7 +29,8 @@ jobs:
       env:
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        IMAGE_URL: ${{ env.IMAGE_URL }}
       run: |
         curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendPhoto" \
           -F chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-          -F photo="$(cat ./ImagensGeradas/latest_image_url.txt)"
+          -F photo="$IMAGE_URL"
