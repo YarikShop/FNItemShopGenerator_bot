@@ -63,4 +63,4 @@ jobs:
         echo "Sending Image URL: $IMAGE_URL to Telegram"
         curl -v -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendPhoto" \
           -F chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-          -F photo="$IMAGE_URL"
+          -d photo="$IMAGE_URL"
