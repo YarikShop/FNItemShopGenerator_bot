@@ -24,8 +24,8 @@ jobs:
         FNAPI_IO_TOKEN: ${{ secrets.FNAPI_IO_TOKEN }}
         IMGBB_API_KEY: ${{ secrets.IMGBB_API_KEY }}
       run: |
-        IMAGE_URL=$(cat ./ImagensGeradas/latest_image_url.txt)
-        if [ -z "$IMAGE_URL" ]; then
+        IMAGE_URL=$(node index_fnapi.io.js | tail -n 1)
+        if [[ ! "$IMAGE_URL" =~ ^https?:// ]]; then
           echo "Error: IMAGE_URL is empty. Skipping Telegram notification."
           exit 1
         fi
