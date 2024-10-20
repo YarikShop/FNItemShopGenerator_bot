@@ -291,9 +291,5 @@ saveImage().then(async (savedFile) => {
     if ((process.env.UPLOAD_TO_GITHUB || '').toLocaleLowerCase() === 'yes') {
       gitUpload(savePath, savedFile);
     }
-  }) catch (err) {
-    console.error(`[ERROR] Ошибка загрузки на Imgbb: ${err}`);
-  }
-}).catch((err) => {
-  console.error(`[ERROR] Ошибка при сохранении изображения: ${err}`);
+  
 });
