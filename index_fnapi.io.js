@@ -286,10 +286,11 @@ saveImage().then(async (savedFile) => {
 
   // Вывод URL изображения в консоль
     console.log(imageUrl);
-  } catch (err) {
-    console.error(`[ERROR] Ошибка загрузки на Imgbb: ${err}`);
-  }
-}
+  
   if ((process.env.UPLOAD_TO_DISCORD_WEBHOOK || '').toLocaleLowerCase() === 'yes') discordWebhook(savePath, savedFile);
   if ((process.env.UPLOAD_TO_GITHUB || '').toLocaleLowerCase() === 'yes') gitUpload(savePath, savedFile);
+
+} catch (err) {
+    console.error(`[ERROR] Ошибка загрузки на Imgbb: ${err}`);
+}
 });
