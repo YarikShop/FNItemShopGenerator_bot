@@ -23,9 +23,16 @@ jobs:
       env:
         FNAPI_IO_TOKEN: ${{ secrets.FNAPI_IO_TOKEN }}
         IMGBB_API_KEY: ${{ secrets.IMGBB_API_KEY }}
-      run: node index_fnapi.io.js
+      run: |
+        IMAGE_URL=$(node index_fnapi.io.js)
+        if [ -z "$IMAGE_URL" ]; then
+          echo "Error: IMAGE_URL is empty. Skipping further steps."
+          exit 1
+        fi
+        echo "IMAGE_URL=$IMAGE_URL" >> $GITHUB_ENV
 
     - name: Send Image to Telegram Bot
+      if: env.IMAGE_URL != ''
       env:
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
