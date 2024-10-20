@@ -1,24 +1,25 @@
 name: Manual Run of Item Shop Generator
 
 on:
-  workflow_dispatch:  # Это событие позволяет запускать workflow вручную через GitHub интерфейс
+  workflow_dispatch: # Это событие позволяет запускать workflow вручную через GitHub интерфейс
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
-      - name: Checkout repository
-        uses: actions/checkout@v2
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'  # Убедитесь, что версия Node.js совпадает с той, что требуется вашим проектом
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16' # Убедитесь, что версия Node.js совпадает с той, что требуется вашим проектом
 
-      - name: Install dependencies
-        run: npm install
+    - name: Install dependencies
+      run: npm install
 
-      - name: Run script
-        env:
-          FNAPI_IO_TOKEN: ${{ secrets.FNAPI_IO_TOKEN }}
+    - name: Run script
+      env:
+        FNAPI_IO_TOKEN: ${{ secrets.FNAPI_IO_TOKEN }}
       run: node index_fnapi.io.js
