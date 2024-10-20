@@ -19,19 +19,17 @@ jobs:
     - name: Install dependencies
       run: npm install
       
-    - name: Run script
+    - name: Run script and extract image URL
       env:
         FNAPI_IO_TOKEN: ${{ secrets.FNAPI_IO_TOKEN }}
         IMGBB_API_KEY: ${{ secrets.IMGBB_API_KEY }}
       run: |
         IMAGE_URL=$(node index_fnapi.io.js | tail -n 1)
         if [[ ! "$IMAGE_URL" =~ ^https?:// ]]; then
-          echo "Error: IMAGE_URL is empty. Skipping Telegram notification."
+          echo "Error: IMAGE_URL is invalid or empty. Skipping further steps."
           exit 1
         fi
-        curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendPhoto" \
-          -F chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-          -F photo="$IMAGE_URL"
+        echo "IMAGE_URL=$IMAGE_URL" >> $GITHUB_ENV
 
     - name: Send Image to Telegram Bot
       if: env.IMAGE_URL != ''
@@ -43,3 +41,5 @@ jobs:
         curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendPhoto" \
           -F chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
           -F photo="$IMAGE_URL"
+          
+        
