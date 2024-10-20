@@ -1,7 +1,9 @@
-name: Manual Run of Item Shop Generator
+name: Run of Item Shop Generator
 
 on:
-  workflow_dispatch: # Это событие позволяет запускать workflow вручную через GitHub интерфейс
+  workflow_dispatch: # Allows manual triggering of the workflow
+  schedule:
+    - cron: "0 3 * * *" # This will run the job every day at 03:00 AM UTC.
   
 jobs:
   build:
