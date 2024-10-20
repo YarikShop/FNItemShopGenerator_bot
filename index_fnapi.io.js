@@ -39,6 +39,7 @@ let shopItems = shopData?.shop || [];
 
 
 
+// *** Фильтрация ненужных предметов ***
 if (shopItems && Array.isArray(shopItems)) {
   shopItems = shopItems.filter((shopItem) => {
     const allowedTypes = ['outfit', 'pickaxe', 'emote', 'wrap', 'glider', 'backbling']; // Разрешённые типы предметов
@@ -52,7 +53,7 @@ if (shopItems && Array.isArray(shopItems)) {
 shopItems = shopItems.filter((shopItem) => {
   const allowedTypes = ['outfit', 'pickaxe', 'emote', 'wrap', 'glider', 'backbling']; // Разрешённые типы предметов
   return allowedTypes.includes(shopItem.mainType);
-});
+}); 
 
 console.log(`[INFO] Loja verificada, ${shopItems.length} itens encontrados`);
 
