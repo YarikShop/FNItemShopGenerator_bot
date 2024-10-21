@@ -65,7 +65,7 @@ jobs:
           exit 1
         fi
         echo "Sending Image URL: $IMAGE_URL to Make.com Webhook"
-        curl -s -X POST "$MAKE_WEBHOOK_URL" -H "Content-Type: application/json" -d '{"imageUrl": "'$IMAGE_URL'"}'
+        curl -s -X POST "$MAKE_WEBHOOK_URL" -H "Content-Type: image/png" -d '{"imageUrl": "'$IMAGE_URL'"}'
         
         
       
