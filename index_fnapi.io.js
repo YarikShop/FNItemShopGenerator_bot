@@ -41,7 +41,7 @@ let shopItems = shopData?.shop || [];
 // *** Фильтрация ненужных предметов ***
 if (shopItems && Array.isArray(shopItems)) {
   shopItems = shopItems.filter((shopItem) => {
-    const allowedTypes = ['vehicle_booster', 'bundle', 'outfit', 'pickaxe', 'emote', 'wrap', 'glider', 'backbling', 'backbling_prop', 'backbling_set']; // Разрешённые типы предметов
+    const allowedTypes = ['bundle', 'outfit', 'pickaxe', 'emote', 'wrap', 'glider', 'backbling']; // Разрешённые типы предметов
     return allowedTypes.includes(shopItem.mainType);
   });
 } else {
@@ -50,7 +50,7 @@ if (shopItems && Array.isArray(shopItems)) {
 }
 
 shopItems = shopItems.filter((shopItem) => {
-  const allowedTypes = ['vehicle_booster', 'bundle', 'outfit', 'pickaxe', 'emote', 'wrap', 'glider', 'backbling', 'backbling_prop', 'backbling_set']; // Разрешённые типы предметов
+  const allowedTypes = ['bundle', 'outfit', 'pickaxe', 'emote', 'wrap', 'glider', 'backbling']; // Разрешённые типы предметов
   return allowedTypes.includes(shopItem.mainType);
 }); 
 
