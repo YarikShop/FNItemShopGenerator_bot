@@ -37,7 +37,11 @@ const shopData = await fetch("https://fortniteapi.io/v2/shop", {
 const currentDate = shopData.lastUpdate.date.replace(" ", "-").split(`-`);
 let shopItems = shopData?.shop || [];
 
-console.log(shopItems.map(item => item.mainType));
+// *** Вывод значений mainType в консоль для анализа типов предметов ***
+if (shopItems && Array.isArray(shopItems)) {
+  console.log("Типы предметов в магазине:", shopItems.map(item => item.mainType));
+}
+
 // *** Фильтрация ненужных предметов ***
 if (shopItems && Array.isArray(shopItems)) {
   shopItems = shopItems.filter((shopItem) => {
